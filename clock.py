@@ -36,14 +36,13 @@ def send_email(to_email, name, activation):
     TEMPLATE_ID = 'd-5d60da30217d4bda9395313daac3d05a'
 
     # list of emails and preheader names, update with yours
-    TO_EMAIL = 'xinruili07@gmail.com'
     message = Mail(
         from_email=FROM_EMAIL,
-        to_emails=TO_EMAIL)
+        to_emails=to_email)
 
     message.dynamic_template_data = {
-        'name': 'Xin Rui Li',
-        'activation': 'mcss92587701',
+        'name': name,
+        'activation': activation
     }
 
     message.template_id = TEMPLATE_ID
