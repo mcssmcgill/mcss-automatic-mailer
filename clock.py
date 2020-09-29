@@ -9,7 +9,7 @@ load_dotenv()
 
 sched = BlockingScheduler()
 
-@sched.scheduled_job('interval', minutes=3)
+@sched.scheduled_job('interval', minutes=10)
 def start_email_schedule():
     assign_and_email()
 
