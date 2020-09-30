@@ -30,7 +30,7 @@ def email_all_customers():
 
 def send_email(to_email, name, activation):
     # from address we pass to our Mail object, edit with your name
-    FROM_EMAIL = 'xin.rui.li@mail.mcgill.ca'
+    FROM_EMAIL = 'vp_external@mcss.ca'
 
     # update to your dynamic template id from the UI
     TEMPLATE_ID = 'd-5d60da30217d4bda9395313daac3d05a'
