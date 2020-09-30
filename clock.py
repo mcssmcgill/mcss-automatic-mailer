@@ -2,8 +2,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 import requests
 import os
 from dotenv import load_dotenv
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import json
 
 load_dotenv()
 
@@ -29,35 +28,26 @@ def email_all_customers():
         mark_as_mailed(customer_id)
 
 def send_email(to_email, name, activation):
-    # from address we pass to our Mail object, edit with your name
-    FROM_EMAIL = 'vp_external@mcss.ca'
-
-    # update to your dynamic template id from the UI
-    TEMPLATE_ID = 'd-5d60da30217d4bda9395313daac3d05a'
-
-    # list of emails and preheader names, update with yours
-    message = Mail(
-        from_email=FROM_EMAIL,
-        to_emails=to_email)
-
-    message.dynamic_template_data = {
+    data = {
         'name': name,
         'activation': activation
     }
 
-    message.template_id = TEMPLATE_ID
+    email = requests.post(
+		os.environ.get('MAILGUN_DOMAIN_URL'),
+		auth=("api", os.environ.get('MAILGUN_API_KEY')),
+		data={"from": "MCSS <vp_external@mcss.ca>",
+			"to": to_email,
+			"subject": "MCSS Membership Card",
+			"template": "membership-card",
+			"h:X-Mailgun-Variables": json.dumps(data)
+        }
+    )
 
-    try:
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        response = sg.send(message)
-        code, body, headers = response.status_code, response.body, response.headers
-        print(f"Response code: {code}")
-        print(f"Response headers: {headers}")
-        print(f"Response body: {body}")
-        print("Dynamic Messages Sent!")
-    except Exception as e:
-        print("Error: {0}".format(e))
-    return str(response.status_code)
+    if email.status_code == 200:
+        print("Email sent to {}".format(to_email))
+    else:
+        print("Email not sent to {}".format(to_email))
 
 # Get the number of activation codes required and assign each one to each customer
 def assign_codes_to_customers():
