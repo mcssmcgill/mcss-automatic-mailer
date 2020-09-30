@@ -24,8 +24,9 @@ def email_all_customers():
         activation = customer['fields']['activationCode']
         customer_id = customer['id']
 
-        send_email(email, name, activation)
-        mark_as_mailed(customer_id)
+        response = send_email(email, name, activation)
+        if response:
+            mark_as_mailed(customer_id)
 
 def send_email(to_email, name, activation):
     data = {
@@ -48,6 +49,8 @@ def send_email(to_email, name, activation):
         print("Email sent to {}".format(to_email))
     else:
         print("Email not sent to {}".format(to_email))
+
+    return email.status_code == 200
 
 # Get the number of activation codes required and assign each one to each customer
 def assign_codes_to_customers():
